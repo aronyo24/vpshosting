@@ -17,6 +17,6 @@ sudo apt install certbot python3-certbot-apache -y
 
 ```sh
 syntex : sudo certbot --apache -d domain_name -d domain_name
-Example: sudo certbot --apache -d sujitbiswas.info -d www.sujitbiswas.info
+Example: sudo certbot --apache -d 247school.org -d www.247school.org
 
 ```
