@@ -111,31 +111,82 @@ sudo ufw reload
 	  Ex: sudo nano /etc/apache2/sites-available/admin.247school.conf
       ```
       Add the following configuration:
-      ```
-      <VirtualHost *:80>
-          ServerName yourdomain.com
-          DocumentRoot /var/www/html
+ ```
+ <VirtualHost *:80>
+    ServerName admin.247school.org
+    ServerAlias www.admin.247school.org
+    ServerAdmin aronyo@247school.org
 
-          Alias /static /path/to/your-django-project/static
-          <Directory /path/to/your-django-project/static>
-              Require all granted
-          </Directory>
+    # DocumentRoot /var/www/247school/frontend/dist  # Optional, if React is built here
 
-          <Directory /path/to/your-django-project>
-              <Files wsgi.py>
-                  Require all granted
-              </Files>
-          </Directory>
+    Alias /static /var/www/247school/backend/staticfiles
+    Alias /media /var/www/247school/backend/media
 
-          WSGIDaemonProcess django_app python-home=/path/to/your-django-project/venv python-path=/path/to/your-django-project
-          WSGIProcessGroup django_app
-          WSGIScriptAlias / /path/to/your-django-project/wsgi.py
+    <Directory /var/www/247school/backend/staticfiles>
+        Require all granted
+    </Directory>
 
-          ErrorLog ${APACHE_LOG_DIR}/django_error.log
-          CustomLog ${APACHE_LOG_DIR}/django_access.log combined
-      </VirtualHost>
-      ```
-      Replace paths and `yourdomain.com` with your actual project paths and domain.
+    <Directory /var/www/247school/backend/media>
+        Require all granted
+    </Directory>
+
+    <Directory /var/www/247school/backend/backend>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess 247school_admin python-home=/var/www/247school/mvsc python-path=/var/www/247school/backend
+    WSGIProcessGroup 247school_admin
+    WSGIScriptAlias / /var/www/247school/backend/backend/wsgi.py
+
+    ErrorLog ${APACHE_LOG_DIR}/admin.247school.org-error.log
+    CustomLog ${APACHE_LOG_DIR}/admin.247school.org-access.log combined
+
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =admin.247school.org [OR]
+    RewriteCond %{SERVER_NAME} =www.admin.247school.org
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    ServerName admin.247school.org
+    ServerAlias www.admin.247school.org
+    ServerAdmin aronyo@247school.org
+
+#    DocumentRoot /var/www/247school/frontend/dist  # Optional, if React is built here
+
+    Alias /static /var/www/247school/backend/staticfiles
+    Alias /media /var/www/247school/backend/media
+
+    <Directory /var/www/247school/backend/staticfiles>
+        Require all granted
+    </Directory>
+
+    <Directory /var/www/247school/backend/media>
+        Require all granted
+    </Directory>
+
+    <Directory /var/www/247school/backend/backend>
+        <Files wsgi.py>
+            Require all granted
+        </Files>
+    </Directory>
+
+    WSGIDaemonProcess 247school python-home=/var/www/247school/mvsc python-path=/var/www/247school/backend
+    WSGIProcessGroup 247school
+    WSGIScriptAlias / /var/www/247school/backend/backend/wsgi.py
+
+    ErrorLog ${APACHE_LOG_DIR}/admin.247school.org-error.log
+    CustomLog ${APACHE_LOG_DIR}/admin.247school.org-access.log combined
+
+Include /etc/letsencrypt/options-ssl-apache.conf
+SSLCertificateFile /etc/letsencrypt/live/admin.247school.org/fullchain.pem
+SSLCertificateKeyFile /etc/letsencrypt/live/admin.247school.org/privkey.pem
+</VirtualHost>
+</IfModule>
+```
+ 
 
    2. **Set Up a Virtual Host for React**
       Create another configuration file:
