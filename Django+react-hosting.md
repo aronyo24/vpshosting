@@ -30,6 +30,29 @@ sudo apt install git
 
 ---
 
+- Install virtualenv
+```sh
+pip list
+sudo apt install python3 python3-venv
+```
+- Verify Apache2 is Active and Running
+```sh
+sudo service apache2 status
+```
+- Verify Web Server Ports are Open and Allowed through Firewall
+```sh
+sudo ufw status verbose
+```
+- if not active
+```sh
+sudo ufw enable
+sudo ufw allow ssh
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw reload
+
+```
+
 ### 2. **Set Up Django Backend**
    1. **Clone Your Django Project**
       ```bash
