@@ -1,10 +1,8 @@
 **To host a React frontend and Django backend on an Apache server in a VPS.
 ---
 
-##### Note - If you get Permission Denied Please use sudo
-- Login to Your Domain Provider Website
+
 - Navigate to Manage DNS
-- Add Following Records:
 
 | Type | Host/Name | Value |
 | :---: | :---: | :--- |
