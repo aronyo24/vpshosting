@@ -265,8 +265,8 @@ SSLCertificateKeyFile /etc/letsencrypt/live/admin.247school.org/privkey.pem
 ---
 
 ### 6. **Test Your Setup**
-   - Django backend: Visit `http://yourdomain.com`.
-   - React frontend: Visit `http://react.yourdomain.com`.
+   - Django backend: Visit `http://admin.247school.org`.
+   - React frontend: Visit `http://247school.org`.
 
 ---
 
