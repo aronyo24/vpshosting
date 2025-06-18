@@ -143,21 +143,58 @@ sudo ufw reload
       sudo nano /etc/apache2/sites-available/react.conf
       ```
       Add the following:
-      ```
-      <VirtualHost *:80>
-          ServerName react.yourdomain.com
-          DocumentRoot /var/www/html/react-app
+ ```
 
-          <Directory /var/www/html/react-app>
-              Options Indexes FollowSymLinks
-              AllowOverride All
-              Require all granted
-          </Directory>
+<VirtualHost *:80>
+    ServerName 247school.org
+    ServerAlias www.247school.org
+    DocumentRoot /var/www/247school/frontend/dist
 
-          ErrorLog ${APACHE_LOG_DIR}/react_error.log
-          CustomLog ${APACHE_LOG_DIR}/react_access.log combined
-      </VirtualHost>
-      ```
+    <Directory /var/www/247school/frontend/dist>
+        Options -Indexes +FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/247school.org-error.log
+    CustomLog ${APACHE_LOG_DIR}/247school.org-access.log combined
+
+    # Redirect all HTTP to HTTPS
+    RewriteEngine on
+    RewriteCond %{SERVER_NAME} =www.247school.org [OR]
+    RewriteCond %{SERVER_NAME} =247school.org
+    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [END,NE,R=permanent]
+</VirtualHost>
+
+<IfModule mod_ssl.c>
+<VirtualHost *:443>
+    ServerName 247school.org
+    ServerAlias www.247school.org
+    DocumentRoot /var/www/247school/frontend/dist
+
+    <Directory /var/www/247school/frontend/dist>
+        Options -Indexes +FollowSymLinks
+        AllowOverride None
+        Require all granted
+
+        # ✅ Rewrite all non-file requests to index.html for React Router
+        RewriteEngine On
+        RewriteBase /
+        RewriteCond %{REQUEST_FILENAME} !-f
+        RewriteCond %{REQUEST_FILENAME} !-d
+        RewriteRule ^ index.html [L]
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/247school.org-error.log
+    CustomLog ${APACHE_LOG_DIR}/247school.org-access.log combined
+
+    Include /etc/letsencrypt/options-ssl-apache.conf
+    SSLCertificateFile /etc/letsencrypt/live/247school.org/fullchain.pem
+    SSLCertificateKeyFile /etc/letsencrypt/live/247school.org/privkey.pem
+</VirtualHost>
+</IfModule>
+
+  ```
 
    3. **Enable the Sites**
       Enable the Django and React sites:
