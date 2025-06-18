@@ -188,8 +188,9 @@ SSLCertificateKeyFile /etc/letsencrypt/live/admin.247school.org/privkey.pem
 
    2. **Set Up a Virtual Host for React**
       Create another configuration file:
-      ```bash
-      sudo nano /etc/apache2/sites-available/react.conf
+       ```bash
+          sudo nano /etc/apache2/sites-available/react.conf
+	  Ex: sudo nano /etc/apache2/sites-available/247school.conf
       ```
       Add the following:
  ```
