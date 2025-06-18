@@ -106,7 +106,7 @@ sudo ufw reload
       Create a new Apache configuration file:
       ```bash
       sudo nano /etc/apache2/sites-available/django.conf
-	  Ex: sudo nano /etc/apache2/sites-available/admin.247school.conf
+	  Ex: sudo nano /etc/apache2/sites-available/admin.247school.org.conf
       ```
       Add the following configuration:
  ```
@@ -190,7 +190,7 @@ SSLCertificateKeyFile /etc/letsencrypt/live/admin.247school.org/privkey.pem
       Create another configuration file:
        ```bash
           sudo nano /etc/apache2/sites-available/react.conf
-	  Ex: sudo nano /etc/apache2/sites-available/247school.conf
+	  Ex: sudo nano /etc/apache2/sites-available/247school.org.conf
       ```
       Add the following:
  ```
