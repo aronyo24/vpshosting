@@ -1,6 +1,17 @@
-To host a React frontend and Django backend on an Apache server in a VPS, follow these steps. This guide assumes that your VPS has a Linux distribution (e.g., Ubuntu) and Apache installed.
-
+To host a React frontend and Django backend on an Apache server in a VPS.
 ---
+
+##### Note - If you get Permission Denied Please use sudo
+- Login to Your Domain Provider Website
+- Navigate to Manage DNS
+- Add Following Records:
+
+| Type | Host/Name | Value |
+| :---: | :---: | :--- |
+| A     | @     | Your Remote Server IP |
+| A     | www   | Your Remote Server IP |
+| AAAA  | @     | Your Remote Server IPv6 |
+| AAAA  | www   | Your Remote Server IPv6 |
 
 ### 1. **Prepare Your VPS**
    - Update your VPS:
@@ -8,14 +19,14 @@ To host a React frontend and Django backend on an Apache server in a VPS, follow
      sudo apt update && sudo apt upgrade -y
      ```
    - Install necessary dependencies:
-     ```bash
+```bash
 sudo apt install apache2
 sudo apt update
 sudo apt install python
 sudo apt install libapache2-mod-wsgi-py3
 sudo apt install python3-pip
 sudo apt install git
-     ```
+ ```
 
 ---
 
