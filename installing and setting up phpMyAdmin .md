@@ -43,7 +43,7 @@ CREATE DATABASE db_name;
 ### create the User:
 
 ```sh
-CREATE USER 'user_name'@'localhost' IDENTIFIED BY 'user_namet';
+CREATE USER 'user_name'@'localhost' IDENTIFIED BY 'user_password';
 
 ```
 
