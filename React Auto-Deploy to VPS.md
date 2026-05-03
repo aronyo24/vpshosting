@@ -1,8 +1,7 @@
 # 🚀 React Auto-Deploy to VPS — Complete Guide
-> **Project:** UniAdmission Frontend  
-> **VPS IP:** 82.165.105.124  
-> **Stack:** React + Vite → GitHub Actions → Apache VPS  
-> **Status:** ✅ Working
+> **Stack:** React + Vite → GitHub Actions → Apache / Nginx VPS  
+> **Trigger:** Push to `main` branch → Auto build → Auto deploy  
+> **Status:** ✅ Production Ready
 
 ---
 
@@ -11,7 +10,7 @@
 Every time you push code to the `main` branch, GitHub Actions automatically:
 1. Builds your React project (`npm run build`)
 2. SSHs into your VPS securely
-3. Deploys the new `dist/` files to Apache's serving folder
+3. Deploys the new `dist/` files to your server's serving folder
 
 No manual deployment ever needed again.
 
@@ -26,11 +25,11 @@ Add these 6 secrets:
 | Secret Name | Value | How to Get |
 |---|---|---|
 | `VPS_SSH_KEY` | Your VPS private key content | `cat ~/.ssh/id_ed25519` on VPS |
-| `VPS_KNOWN_HOST` | VPS fingerprint | `ssh-keyscan -H 82.165.105.124` on VPS |
-| `VPS_HOST` | `82.165.105.124` | Your VPS IP |
+| `VPS_KNOWN_HOST` | VPS fingerprint | `ssh-keyscan -H YOUR_VPS_IP` on VPS |
+| `VPS_HOST` | `YOUR_VPS_IP` | e.g. `123.456.789.000` |
 | `VPS_PORT` | `22` | Default SSH port |
 | `VPS_USERNAME` | `root` | Your VPS login user |
-| `VPS_TARGET_DIR` | `/var/www/uniadmission/dist` | Where Apache serves files |
+| `VPS_TARGET_DIR` | `/var/www/your-project/dist` | Where Apache/Nginx serves files |
 
 ---
 
@@ -42,6 +41,12 @@ cat ~/.ssh/id_ed25519
 ```
 Copy everything including `-----BEGIN OPENSSH PRIVATE KEY-----` and `-----END OPENSSH PRIVATE KEY-----`
 
+> If you don't have this file, check what keys exist first:
+> ```bash
+> ls ~/.ssh/
+> ```
+> Then `cat` whichever private key file you see (no `.pub` extension).
+
 ### 2. Allow the key to login (authorize it)
 ```bash
 cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
@@ -50,9 +55,9 @@ chmod 600 ~/.ssh/authorized_keys
 
 ### 3. Get the known host fingerprint (VPS_KNOWN_HOST)
 ```bash
-ssh-keyscan -H 82.165.105.124
+ssh-keyscan -H YOUR_VPS_IP
 ```
-Copy the full output line(s).
+Copy the full output line(s) and paste as the secret value.
 
 ---
 
@@ -60,12 +65,10 @@ Copy the full output line(s).
 
 ```
 /var/www/
-├── uniadmission/
-│   └── dist/              ← Apache serves THIS folder
-│       ├── index.html
-│       └── assets/
-├── uniadmission_api/      ← Backend API (separate)
-└── html/                  ← Default Apache folder
+└── your-project/
+    └── dist/              ← Apache/Nginx serves THIS folder
+        ├── index.html
+        └── assets/
 ```
 
 > ⚠️ Only keep the `dist/` folder on VPS. The `src/`, `node_modules/`, `package.json` etc. are development files — they belong only in your GitHub repo, not on the server.
@@ -168,10 +171,10 @@ npm ci → npm run build → creates dist/
         ↓
 SSH key loaded from GitHub Secrets
         ↓
-rsync copies dist/ → VPS /var/www/uniadmission/dist/
+rsync copies dist/ → VPS /var/www/your-project/dist/
 (--delete removes any old files automatically)
         ↓
-Apache serves updated site ✓
+Apache/Nginx serves updated site ✓
 SSL remains active ✓
 ```
 
@@ -189,7 +192,7 @@ index.html       → root HTML changes
 vite.config.ts   → build config changes
 ```
 
-Pushing changes to README, `.github/`, or other files will **not** trigger a deploy.
+> Pushing changes to `README`, `.github/`, or other files will **not** trigger a deploy.
 
 ---
 
@@ -212,7 +215,7 @@ git push origin main
 cat ~/.ssh/id_ed25519.pub >> ~/.ssh/authorized_keys
 chmod 600 ~/.ssh/authorized_keys
 ```
-Then update `VPS_SSH_KEY` secret with:
+Then update `VPS_SSH_KEY` secret in GitHub with:
 ```bash
 cat ~/.ssh/id_ed25519
 ```
@@ -231,7 +234,7 @@ branches:
 ### Verify deployment manually
 ```bash
 # On VPS
-ls -la /var/www/uniadmission/dist/
+ls -la /var/www/your-project/dist/
 curl -I https://yourdomain.com
 ```
 
@@ -242,20 +245,36 @@ curl -I https://yourdomain.com
 Run once on VPS to remove unnecessary development files:
 
 ```bash
-cd /var/www/uniadmission
+cd /var/www/your-project
 
 rm -rf node_modules src public
 rm -f package.json package-lock.json vite.config.ts
 rm -f tsconfig.json tsconfig.app.json tsconfig.node.json
-rm -f eslint.config.js README.md API_GUIDE.md
-rm -f TYPES_GUIDE.md TYPES_SEPARATION_SUMMARY.md index.html
+rm -f eslint.config.js README.md
 
 # Verify only dist/ remains
-ls /var/www/uniadmission/
+ls /var/www/your-project/
 ```
 
 > These files will never come back — the workflow only deploys built `dist/` files.
 
 ---
 
-*Generated for UniAdmission project — Technoheaven Pvt Ltd*
+## 📝 Quick Checklist
+
+Before your first deploy, confirm all these are done:
+
+- [ ] `.github/workflows/deploy.yml` exists in your repo
+- [ ] `VPS_SSH_KEY` secret added in GitHub
+- [ ] `VPS_KNOWN_HOST` secret added in GitHub
+- [ ] `VPS_HOST` secret added in GitHub
+- [ ] `VPS_PORT` secret added in GitHub
+- [ ] `VPS_USERNAME` secret added in GitHub
+- [ ] `VPS_TARGET_DIR` secret added in GitHub
+- [ ] Public key added to VPS `authorized_keys`
+- [ ] Apache/Nginx `DocumentRoot` points to your `dist/` folder
+
+---
+
+*Feel free to use and share this guide freely.*  
+*Replace all `YOUR_VPS_IP`, `your-project`, and `yourdomain.com` placeholders with your actual values.*
